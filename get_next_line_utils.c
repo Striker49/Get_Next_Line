@@ -6,7 +6,7 @@
 /*   By: seroy <seroy@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/17 19:01:25 by seroy             #+#    #+#             */
-/*   Updated: 2023/02/24 17:07:21 by seroy            ###   ########.fr       */
+/*   Updated: 2023/02/27 12:34:40 by seroy            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,20 +33,20 @@ int	ft_strchr(const char *s, int c)
 	return (0);
 }
 
-char	*ft_substr(char *s, int start)
-{
-	char	*s2;
-	int		nlen;
+// char	*ft_substr(char *s, int start)
+// {
+// 	char	*s2;
+// 	int		nlen;
 
-	if (!s)
-		return (NULL);
-	nlen = ft_strlen(s);
-	s2 = (char *)malloc((nlen + 1) * sizeof(char));
-	if (!s2)
-		return (NULL);
-	ft_strlcpy(s2, s + start, nlen + 1);
-	return (s2);
-}
+// 	if (!s)
+// 		return (NULL);
+// 	nlen = ft_strlen(s);
+// 	s2 = (char *)malloc((nlen + 1) * sizeof(char));
+// 	if (!s2)
+// 		return (NULL);
+// 	ft_strlcpy(s2, s + start, nlen + 1);
+// 	return (s2);
+// }
 
 int	ft_strlen(const char *str)
 {
@@ -60,7 +60,7 @@ int	ft_strlen(const char *str)
 	return (i);
 }
 
-int	ft_strlcpy(char *dst, const char *src, int dstsize)
+int	ft_strlcpy(char *dst, char *src, int dstsize)
 {
 	int		i;
 	int		j;
@@ -83,10 +83,11 @@ int	ft_strlcpy(char *dst, const char *src, int dstsize)
 	}
 	if (dstsize != 0)
 		dst[i] = '\0';
+	free(src);
 	return (j);
 }
 
-char	*ft_strjoin(char *s1, char const *s2)
+char	*ft_strjoin(char *s1, char *s2)
 {
 	char	*ts1;
 	int		i;
@@ -94,13 +95,15 @@ char	*ft_strjoin(char *s1, char const *s2)
 	int		lens2;
 
 	lens1 = ft_strlen(s1);
-	lens2 = ft_strlen(s2);
+	if (ft_strchr(s2, '\n') != 0)
+		lens2 = ft_strchr(s2, '\n') + 1;
+	else
+		lens2 = ft_strlen(s2);
 	ts1 = (char *)malloc((lens1 + lens2 + 1) * sizeof(char));
-	// if (!s1 || !s2 || !ts1)
 	if (!s2 || !ts1)
 		return (NULL);
 	i = 0;
-	while ( s1[i] && s1[i] != '\0')
+	while ( s1[i])
 	{
 		ts1[i] = s1[i];
 		i++;
@@ -112,6 +115,13 @@ char	*ft_strjoin(char *s1, char const *s2)
 		i++;
 	}
 	if (s2[i] == '\n')
+	{
 		ts1[lens1 + i] = s2[i];
+		i++;
+	}
+	ts1[lens1 + i] = '\0';
+	free(s1);
+	// if (ft_strchr(s2, '\n') == 0)
+	// 	free(s2);
 	return (ts1);
 }

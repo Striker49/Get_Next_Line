@@ -6,7 +6,7 @@
 /*   By: seroy <seroy@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/17 17:58:01 by seroy             #+#    #+#             */
-/*   Updated: 2023/02/24 17:09:22 by seroy            ###   ########.fr       */
+/*   Updated: 2023/02/27 12:38:12 by seroy            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,14 +23,14 @@
 
 #ifndef BUFFER_SIZE
 // #define BUFFER_SIZE 1
-#define BUFFER_SIZE 1000
+#define BUFFER_SIZE 1
 #endif
 
 char	*get_next_line(int fd);
 char	*ft_substr(char *s, int start);
 int		ft_strlen(const char *str);
-int		ft_strlcpy(char *dst, const char *src, int dstsize);
-char	*ft_strjoin(char *s1, char const *s2);
+int		ft_strlcpy(char *dst, char *src, int dstsize);
+char	*ft_strjoin(char *s1, char *s2);
 int		ft_strchr(const char *s, int c);
 
 #endif

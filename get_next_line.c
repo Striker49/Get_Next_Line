@@ -6,7 +6,7 @@
 /*   By: seroy <seroy@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/17 17:57:00 by seroy             #+#    #+#             */
-/*   Updated: 2023/02/24 17:14:35 by seroy            ###   ########.fr       */
+/*   Updated: 2023/02/27 12:36:57 by seroy            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -43,13 +43,17 @@ char	*ft_over(char *s)
 	char	*temp;
 
 	i = 0;
-	temp = NULL;
+	if (!s)
+		return (NULL);	
 	if (ft_strchr(s, '\n') != 0)
 	{
 		while (s[i] != '\n')
 			i++;
 		i++;
 	}
+	else
+		while (s[i])
+			i++;
 	temp = ft_calloc((ft_strlen(s) - i + 1), sizeof(char));
 	if (!temp)
 		return (NULL);
@@ -60,7 +64,25 @@ char	*ft_over(char *s)
 		i++;
 		j++;
 	}
+	free(s);
 	return (temp);
+}
+
+char	*put_over(char *over, char *line)
+{
+	// if (ft_strchr(over, '\n') != 0)
+	// {
+	// 	line = ft_calloc((ft_strchr(over, '\n') + 1), sizeof(char));
+	// 	ft_strlcpy(line, over, (ft_strchr(over, '\n') + 1));
+	// 	over = ft_over(over);
+	// }
+	// else
+	{
+		line = ft_calloc((ft_strlen(over) + 1), sizeof(char));
+		ft_strlcpy(line, over, (ft_strlen(over) + 1));
+		over = ft_free(over);
+	}
+	return (line);
 }
 
 char	*get_next_line(int fd)
@@ -88,20 +110,28 @@ char	*get_next_line(int fd)
 		{
 			line = ft_calloc((ft_strlen(over) + 1), sizeof(char));
 			ft_strlcpy(line, over, (ft_strlen(over) + 1));
-			ft_free(over);
 		}
 		while (reads != 0 && ft_strchr(buf, '\n') == 0)
 		{
 			buf = ft_calloc(BUFFER_SIZE + 1, sizeof(char));
 			if (!buf)
-				ft_free(buf);
+				free(buf);
 			reads = read(fd, buf, BUFFER_SIZE);
 			if (reads == -1 || BUFFER_SIZE == 0)
 				return (NULL);
 			line = ft_strjoin(line, buf);
-		}
+			// if (ft_strchr(buf, '\n') == 0)
+			// 	free(buf);
+		}			
+
 		over = ft_over(buf);
-		ft_free(buf);
+		// if (reads == 0)
+		// 	free(buf);
+	}
+	if (reads == 0 && !*line)
+	{
+		free(line);
+		return (NULL);
 	}
 	return (line);
 }
@@ -112,13 +142,15 @@ char	*get_next_line(int fd)
 
 int	main(void)
 {
-	int	fd;
+	char	*line;
+	int		fd;
 
-	fd = open("1.txt", O_RDONLY);
-	printf("%s", get_next_line(fd));
-	printf("%s", get_next_line(fd));
-	printf("%s", get_next_line(fd));
-	printf("%s", get_next_line(fd));
-	printf("%s", get_next_line(fd));
+	fd = open("test.txt", O_RDONLY);
+	for (int i = 0; i < 5; i++)
+	{
+		line = get_next_line(fd);
+		printf("%s", line);
+		free(line);
+	}
 	return (0);
 }
