@@ -6,7 +6,7 @@
 /*   By: seroy <seroy@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/17 19:01:25 by seroy             #+#    #+#             */
-/*   Updated: 2023/02/27 12:34:40 by seroy            ###   ########.fr       */
+/*   Updated: 2023/02/27 17:34:17 by seroy            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,21 +32,6 @@ int	ft_strchr(const char *s, int c)
 		return (i);
 	return (0);
 }
-
-// char	*ft_substr(char *s, int start)
-// {
-// 	char	*s2;
-// 	int		nlen;
-
-// 	if (!s)
-// 		return (NULL);
-// 	nlen = ft_strlen(s);
-// 	s2 = (char *)malloc((nlen + 1) * sizeof(char));
-// 	if (!s2)
-// 		return (NULL);
-// 	ft_strlcpy(s2, s + start, nlen + 1);
-// 	return (s2);
-// }
 
 int	ft_strlen(const char *str)
 {
@@ -83,7 +68,6 @@ int	ft_strlcpy(char *dst, char *src, int dstsize)
 	}
 	if (dstsize != 0)
 		dst[i] = '\0';
-	free(src);
 	return (j);
 }
 
@@ -92,36 +76,25 @@ char	*ft_strjoin(char *s1, char *s2)
 	char	*ts1;
 	int		i;
 	int		lens1;
-	int		lens2;
 
 	lens1 = ft_strlen(s1);
 	if (ft_strchr(s2, '\n') != 0)
-		lens2 = ft_strchr(s2, '\n') + 1;
+		ts1 = (char *)malloc((lens1 + ft_strchr(s2, '\n') + 2) * sizeof(char));
 	else
-		lens2 = ft_strlen(s2);
-	ts1 = (char *)malloc((lens1 + lens2 + 1) * sizeof(char));
+		ts1 = (char *)malloc((lens1 + ft_strlen(s2) + 1) * sizeof(char));
 	if (!s2 || !ts1)
 		return (NULL);
 	i = 0;
-	while ( s1[i])
-	{
-		ts1[i] = s1[i];
-		i++;
-	}
-	i = 0;
-	while (s2[i] && s2[i] != '\n')
+	ft_strlcpy(ts1, s1, lens1 + 1);
+	while (s2[i] && s2[i] != '\n' && s2[i] != '\0')
 	{
 		ts1[lens1 + i] = s2[i];
 		i++;
 	}
 	if (s2[i] == '\n')
-	{
 		ts1[lens1 + i] = s2[i];
-		i++;
-	}
-	ts1[lens1 + i] = '\0';
+	i += (s2[i] == '\n');
 	free(s1);
-	// if (ft_strchr(s2, '\n') == 0)
-	// 	free(s2);
+	ts1[lens1 + i] = '\0';
 	return (ts1);
 }
