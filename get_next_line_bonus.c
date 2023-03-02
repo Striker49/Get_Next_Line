@@ -1,16 +1,16 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   get_next_line.c                                    :+:      :+:    :+:   */
+/*   get_next_line_bonus.c                              :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: seroy <seroy@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/17 17:57:00 by seroy             #+#    #+#             */
-/*   Updated: 2023/03/02 14:44:32 by seroy            ###   ########.fr       */
+/*   Updated: 2023/03/02 13:57:38 by seroy            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "get_next_line.h"
+#include "get_next_line_bonus.h"
 
 char	*ft_free(char *s)
 {
@@ -19,10 +19,10 @@ char	*ft_free(char *s)
 		free(s);
 		s = NULL;
 	}
-	return (s);
+	return (NULL);
 }
 
-char	*ft_over(char *s)
+char	*fover(char *s)
 {
 	int		i;
 	int		j;
@@ -30,20 +30,20 @@ char	*ft_over(char *s)
 
 	if (!s || ft_strlen(s) - ft_strchr(s, '\n') == 0)
 	{
-		free(s);
+		ft_free(s);
 		return (NULL);
 	}
 	temp = ft_calloc((ft_strlen(s) - ft_strchr(s, '\n') + 1), sizeof(char));
 	if (!temp)
 	{
-		free(s);
+		ft_free(s);
 		return (NULL);
 	}
 	i = ft_strchr(s, '\n');
 	j = 0;
 	while (s[i])
 		temp[j++] = s[i++];
-	free(s);
+	ft_free(s);
 	return (temp);
 }
 
@@ -54,8 +54,8 @@ char	*ft_reads(int fd, int reads, char *buf, char *over)
 		reads = read(fd, buf, BUFFER_SIZE);
 		if (reads == -1 || BUFFER_SIZE == 0)
 		{
-			free(buf);
-			free(over);
+			ft_free(buf);
+			ft_free(over);
 			over = NULL;
 			return (NULL);
 		}
@@ -65,7 +65,7 @@ char	*ft_reads(int fd, int reads, char *buf, char *over)
 	return (over);
 }
 
-char	*ft_new_line(char *over)
+char	*nl(char *over)
 {
 	char	*line;
 
@@ -77,29 +77,34 @@ char	*ft_new_line(char *over)
 char	*get_next_line(int fd)
 {
 	t_struct		gnl;
-	static char		*over;
+	static char		*over[OPEN_MAX];
 
 	gnl.reads = 1;
 	gnl.line = NULL;
-	if (ft_strchr(over, '\n') != 0)
-		return (gnl.line = ft_new_line(over), over = ft_over(over), gnl.line);
+	if (fd < 0 || fd > OPEN_MAX || BUFFER_SIZE == 0)
+		return (NULL);
+	if (ft_strchr(over[fd], '\n') != 0)
+		return (gnl.line = nl(over[fd]), over[fd] = fover(over[fd]), gnl.line);
 	gnl.buf = ft_calloc(BUFFER_SIZE + 1, sizeof(char));
 	if (!gnl.buf)
 		return (ft_free(gnl.buf));
-	over = ft_reads(fd, gnl.reads, gnl.buf, over);
-	if (gnl.reads == -1 || BUFFER_SIZE == 0 || !over)
+	over[fd] = ft_reads(fd, gnl.reads, gnl.buf, over[fd]);
+	if (gnl.reads == -1 || BUFFER_SIZE == 0 || !over[fd])
 		return (NULL);
-	if (ft_strchr(over, '\n'))
-		gnl.line = ft_calloc((ft_strchr(over, '\n') + 1), sizeof(char));
+	if (ft_strchr(over[fd], '\n'))
+		gnl.line = ft_calloc((ft_strchr(over[fd], '\n') + 1), sizeof(char));
 	else
-		gnl.line = ft_calloc((ft_strlen(over) + 1), sizeof(char));
-	ft_strlcpy(gnl.line, over, (ft_strlen(over) + 1));
-	free(over);
-	over = ft_over(gnl.buf);
+		gnl.line = ft_calloc((ft_strlen(over[fd]) + 1), sizeof(char));
+	ft_strlcpy(gnl.line, over[fd], (ft_strlen(over[fd]) + 1));
+	ft_free(over[fd]);
+	over[fd] = fover(gnl.buf);
 	if (!*gnl.line)
 		return (ft_free(gnl.line));
 	return (gnl.line);
 }
+
+// #include <unistd.h>
+// #include <fcntl.h>
 
 // int	main(void)
 // {
